@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1734069366 source:c:\kevin\kuliah\s3\strukdat\tugas besar\tubes_std_kelompok8\main.cpp
+	"header.h"
+
+1734227473 c:\kevin\kuliah\s3\strukdat\tugas besar\tubes_std_kelompok8\header.h
+	<iostream>
+
+1734227407 source:c:\kevin\kuliah\s3\strukdat\tugas besar\tubes_std_kelompok8\source.cpp
+	"header.h"
+
