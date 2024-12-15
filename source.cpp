@@ -253,6 +253,10 @@ void DeleteOnCursor(List &L, adr &C, adr &P, string &Act){
 
 // Menu
 void input_text(List &L, adr &C, Stack &U) {
+/*
+I.S: terdefisini list L menyimpan elemen char, adr C menyimpan posisi cursor saat ini, dan stack U untuk menyimpan info undo
+F.S: list L berisi nilai setelah memanggil prosedur addText
+*/
     cout << "Text: " << endl; printTextWithCursor(L, C);
     cout << "Ketik text yang ingin dimasukkan: " << endl;
     addText(L, C, U);
@@ -261,66 +265,79 @@ void input_text(List &L, adr &C, Stack &U) {
 }
 
 void print_text(List L) {
-    if (L.first == Nil) {
+/*
+I.S: terdefinisi list L menyimpan elemen char
+F.S: menampilkan text jika list L berisi elemen
+*/
+    if (L.first == Nil) { // list L kosong
         cout << "Text tidak tersedia." << endl;
-    } else {
+    } else { // list L tidak kosong
         cout << "Text: " << endl; printText(L); cout << endl;
     }
 }
 
 void pindahkan_kursor_atau_hapus_teks(List &L, adr &C, Stack &U) {
+/*
+I.S: terdefisini list L menyimpan elemen char, adr C menyimpan posisi cursor saat ini, dan stack U untuk menyimpan info undo
+F.S: memindahkan kursor atau men-delete pada posisi kursor berdasarkan pilihan user
+*/
     int pilih;
     adr tempP, P;
     string aksi;
 
-    if (L.first != Nil) {
+    if (L.first != Nil) { // list L tidak kosong
         do {
             printTextWithCursor(L, C);
             cout << "(1)Kiri (2)Kanan (3)Delete (0)Keluar" << endl;
             cin >> pilih;
 
-            if (pilih == 1) {
+            if (pilih == 1) { // memilih move cursor left
                 moveCursorLeft(L, C);
                 push(U, {"Kursor Kiri", Nil});
-            } else if (pilih == 2) {
+            } else if (pilih == 2) { // memilih move cursor right
                 moveCursorRight(L, C);
                 push(U, {"Kursor Kanan", Nil});
-            } else if (pilih == 3) {
+            } else if (pilih == 3) { // memilih delete char pada posisi cursor
                 tempP = P;
                 DeleteOnCursor(L, C, P, aksi);
                 if (tempP != P) {
                     push(U, {aksi, P});
                 }
             }
-        } while (pilih != 0);
-    } else {
+        } while (pilih != 0); // keluar menu
+    } else { // list L kosong
         cout << "Teks tidak tersedia." << endl;
     }
 }
 
 void cari_kata(List L) {
+/*
+I.S: terdefinisi list L menyimpan elemen char
+F.S: menampilkan text dengan kata yang dicari diapit dengan kurung siku ([])
+*/
     bool status = false;
     adr first = Nil, last = Nil;
-    adr P;
+    adr P, R;
     string X, kata;
-    int i;
+    int countKata = 0;
 
-    if (L.first != Nil) {
+    if (L.first != Nil) { // list L tidak kosong
         cout << "Kata yang ingin dicari: ";
-        cin >> X;
+        cin >> X; // menginput kata yang ingin dicari
 
         P = L.first;
-        while (P != Nil) {
+        while (P != Nil) { // pencarian berjalan ketika pointer P tidak Nil
             kata = "";
             first = P;
-            while (P != Nil && P->info != '_') {
+            while (P != Nil && P->info != '_') { // kumpulkan karakter sampai karakter "_" (spasi)
                 kata += P->info;
                 last = P;
                 P = P->next;
             }
-            if (kata == X) {
-                adr R = first;
-                while (R->prev != last) {
+            R = first;
+            if (kata == X) { // membandingkan penjumlahan elemen diatas dengan X (kata yang ingin dicari
+                countKata++;
+                while (R != last->next) { // jika sesuai, maka menampikan text dilayar dimana kata yang dicari diapit oleh kurung siku ([])
                     if (R == first) {
                         cout << "[" << R->info;
                     } else if (R == last) {
@@ -330,39 +347,44 @@ void cari_kata(List L) {
                     }
                     R = R->next;
                 }
-                i++;
-                if (R->info == '_') {
-                    cout << " ";
+            } else { // jika kata tidak sesuai, tampilkan kata itu
+                while (R != last->next) {
+                    cout << R->info;
+                    R = R->next;
                 }
             }
-
-            if (P->info == '_' && P != Nil) {
+            if (P != Nil && P->info == '_') {
+                cout << " ";
                 P = P->next; // Lanjutkan pencarian setelah karakter '_'
             }
         }
 
-        if (i > 0) {
-            cout << "Menemukan kata" << X << "Sebanyak" << i;
-        } else {
-            cout << "Kata tidak ditemukan." << endl;
+        if (countKata > 0) { // menampilkan kata sudah ditemukan berapa kali
+            cout << endl << "Menemukan kata " << X << " sebanyak " << countKata << " kali." << endl;
+        } else { // jika countKata = 0
+            cout << endl << "Kata tidak ditemukan." << endl;
         }
-    } else {
+    } else { // list L kosong
         cout << "Teks tidak tersedia." << endl;
     }
 }
 
 // undo redo
 void doUndo(List &L, Stack &U, Stack &R, adr &C) {
+/*
+I.S: terdefinisi list L menyimpan elemen char, stack U dan R yang menyimpan history aksi, dan adr C yang menyimpan posisi cursor
+F.S: list L dan adr C ter-Undo sampai bertemu aksi input atau delete dan menyimpan aksi di stack R
+*/
     infoUndoRedo x;
     adr P;
     string tempString;
     bool status = false;
-    if (isEmpty(U)) {
+    if (isEmpty(U)) { // stack U kosong
         cout << "Tidak ada aksi undo." << endl;
         return;
     }
-    while (!isEmpty(U) && !status) {
-        pop(U, x);
+    while (!isEmpty(U) && !status) { // stack U tidak kosong
+        pop(U, x); // pop stack undo
         if (x.aksi == "Kursor Kiri") {
             moveCursorRight(L, C);
         } else if (x.aksi == "Kursor Kanan") {
@@ -380,29 +402,32 @@ void doUndo(List &L, Stack &U, Stack &R, adr &C) {
             insertAfter(L, x.address, C);
             status = true;
         }
-        push(R, x);
+        push(R, x); // push stack redo
     }
 }
 
 void doRedo(List &L, Stack &R, Stack &U, adr &C) {
+/*
+I.S: terdefinisi list L menyimpan elemen char, stack U dan R yang menyimpan history aksi, dan adr C yang menyimpan posisi cursor
+F.S: list L dan adr C ter-Redo sampai bertemu aksi input atau delete dan menyimpan aksi di stack U
+*/
     infoUndoRedo x;
     adr P;
     string tempString;
     bool status = false;
-    if (isEmpty(R)) {
+    if (isEmpty(R)) { // stack U kosong
         cout << "Tidak ada aksi redo." << endl;
         return;
     }
-    while (!isEmpty(R) && !status) {
-        pop(R, x);
-
+    while (!isEmpty(R) && !status) { // stack U tidak kosong
+        pop(R, x); // pop stack redo
         if (x.aksi == "Kursor Kiri") {
             moveCursorLeft(L, C);
         } else if (x.aksi == "Kursor Kanan") {
             moveCursorRight(L, C);
         } else if (x.aksi == "Input" && x.address != Nil) {
             insertAfter(L, x.address, C);
-            C = x.address; // Pastikan kursor berpindah ke elemen yang baru dimasukkan
+            C = x.address;
             status = true;
         } else if (x.aksi == "Delete First") {
             DeleteOnCursor(L, C, P, tempString);
@@ -414,12 +439,15 @@ void doRedo(List &L, Stack &R, Stack &U, adr &C) {
             DeleteOnCursor(L, C, P, tempString);
             status = true;
         }
-        push(U, x);
+        push(U, x); // push stack undo
     }
 }
 
 void undo_redo(List &L, Stack &U, Stack &R, adr &C) {
-// menu untuk operasi undo redo
+/*
+I.S: terdefinisi list L menyimpan elemen char, stack U dan R yang menyimpan history aksi, dan adr C yang menyimpan posisi cursor
+F.S: list L, Stack U, Stack R, dan adr C berubah berdasarkan pilihan yang dipilih user
+*/
     int pilih;
 
     if (L.first != Nil) {
