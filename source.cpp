@@ -21,7 +21,7 @@ bool isFull(Stack S) {
 
 void push(Stack &S, infoUndoRedo x) {
 /*
-I.S: Stack S berisi nilai untuk operasi undo/redo (bisa tidak berisi), dan infoUndoRedo i yang berisi nilai untuk dimasukkan ke Stack S
+I.S: terdefinisi Stack S berisi nilai untuk operasi undo/redo (mungkin kosong) dan infoUndoRedo i yang berisi nilai untuk dimasukkan ke Stack S
 F.S: Stack S berisi nilai baru
 */
     if (!isFull(S)) {
@@ -32,7 +32,7 @@ F.S: Stack S berisi nilai baru
 
 void pop(Stack &S, infoUndoRedo &x) {
 /*
-I.S: Stack S berisi nilai untuk operasi undo/redo (bisa tidak berisi), dan infoUndoRedo i yang akan diisi nilai dari Stack S
+I.S: terdefinisi Stack S berisi nilai untuk operasi undo/redo (mungkin kosong) dan infoUndoRedo i yang akan diisi nilai dari Stack S
 F.S: infoUndoRedo i berisi nilai dari Stack S
 */
     if (!isEmpty(S)) {
@@ -53,17 +53,18 @@ infoUndoRedo peek(Stack S) {
 }
 
 // DLL
-void createList(List &L, adr &Cursor) {
+void createList(List &L, adr &C) {
 /*
-
-
+I.S: terdefinisi List L yang kosong dan adr C yang berisi cursor yang menunjuk sebuah elemen
+F.S: List L berisi Nil dan adr C mempointer L.first
 */
     L.first = Nil;
     L.last = Nil;
-    Cursor = L.first;
+    C = L.first;
 }
 
 adr createElmList(infotype value) {
+// Mengembalikan sebuah adr baru yang berisi nilai yang diinput user
     adr P = new elmList;
     P->prev = Nil;
     P->next = Nil;
@@ -73,6 +74,10 @@ adr createElmList(infotype value) {
 }
 
 void insertFirst(List &L, adr &P){
+/*
+I.S: terdefinisi List L (mungkin kosong) dan adr P sebagai pointer yang akan dimasukkan ke dalam List
+F.S: adr P dimasukkan di awal List L
+*/
     if (L.first == Nil) { // list kosong
         L.first = P;
         L.last = P;
@@ -84,6 +89,10 @@ void insertFirst(List &L, adr &P){
 }
 
 void insertAfter(List &L, adr &P, adr Prec){
+/*
+I.S: terdefinisi List L (mungkin kosong), adr P sebagai pointer yang akan dimasukkan ke dalam List, dan adr Prec sebagai pointer yang berada di List L
+F.S: adr P dimasukkan setelah adr Prec di dalam List L
+*/
     if (Prec == Nil) {
         insertFirst(L, P);
     } else if (Prec == L.last) {
@@ -99,6 +108,10 @@ void insertAfter(List &L, adr &P, adr Prec){
 }
 
 void insertBefore(List &L, adr &P, adr Pred){
+/*
+I.S: terdefinisi List L (mungkin kosong), adr P sebagai pointer yang akan dimasukkan ke dalam List, dan adr Pred sebagai pointer yang berada di List L
+F.S: adr P dimasukkan sebelum adr Prec di dalam List L
+*/
     if (Pred == Nil) { // tidak ada elemen sebelum Pred
         insertFirst(L, P);
     } else if (Pred == L.first) {
@@ -114,6 +127,10 @@ void insertBefore(List &L, adr &P, adr Pred){
 }
 
 void insertLast(List &L, adr &P){
+/*
+I.S: terdefinisi List L (mungkin kosong) dan adr P sebagai pointer yang akan dimasukkan ke dalam List
+F.S: adr P dimasukkan di akhir List L
+*/
     if (L.last == Nil) { // list kosong
         L.first = P;
         L.last = P;
@@ -125,6 +142,10 @@ void insertLast(List &L, adr &P){
 }
 
 void deleteFirst(List &L, adr &P) {
+/*
+I.S: terdefinisi List L (mungkin kosong) dan adr P yang akan menyimpan adr yang dihapus dari List
+F.S: adr P berisi elemen first yang dihapus dari List
+*/
     P = L.first;
     if (L.first == L.last) { // hanya 1 elemen
         L.first = Nil;
@@ -136,20 +157,28 @@ void deleteFirst(List &L, adr &P) {
     }
 }
 
-void deleteAfter(List &L, adr &P, adr Pred){
-    P = Pred->next;
-    if (Pred->next == L.last) {
+void deleteAfter(List &L, adr &P, adr Prec){
+/*
+I.S: terdefinisi List L (mungkin kosong), adr P yang akan menyimpan adr yang dihapus dari List, dan Pred sebagai pointer yang menunjuk posisi hapus
+F.S: adr P berisi elemen setelah Prec yang dihapus dari List
+*/
+    P = Prec->next;
+    if (Prec->next == L.last) {
         deleteLast(L, P);
-    } else if (Pred->next->next != Nil) { // 2 elemen setelah Pred
-        P = Pred->next;
-        Pred->next = P->next;
-        (P->next)->prev = Pred;
+    } else if (Prec->next->next != Nil) { // 2 elemen setelah Pred
+        P = Prec->next;
+        Prec->next = P->next;
+        (P->next)->prev = Prec;
         P->next = Nil;
         P->prev = Nil;
     }
 }
 
 void deleteBefore(List &L, adr &P, adr Pred) {
+/*
+I.S: terdefinisi List L (mungkin kosong), adr P yang akan menyimpan adr yang dihapus dari List, dan Pred sebagai pointer yang menunjuk posisi hapus
+F.S: adr P berisi elemen setelah Prec yang dihapus dari List
+*/
     P = Pred->prev;
     if (Pred->prev == L.first) {
         deleteFirst(L, P);
@@ -163,6 +192,10 @@ void deleteBefore(List &L, adr &P, adr Pred) {
 }
 
 void deleteLast(List &L, adr &P) { // hanya 1 elemen
+/*
+I.S: terdefinisi List L (mungkin kosong) dan adr P yang akan menyimpan adr yang dihapus dari List
+F.S: adr P berisi elemen last yang dihapus dari List
+*/
     P = L.last;
     if (L.first == L.last){
         L.first = Nil;
@@ -175,9 +208,13 @@ void deleteLast(List &L, adr &P) { // hanya 1 elemen
 }
 
 void printText(List L) {
+/*
+I.S: terdefinisi List L (mungkin kosong)
+F.S: menampikan isi List L ke layar
+*/
     adr P = L.first;
     while (P != Nil) {
-        if (P->info == '_') {
+        if (P->info == '_') { // underscore ('_') sebagai spasi
             cout << " ";
         } else {
             cout << P->info;
@@ -188,11 +225,15 @@ void printText(List L) {
 }
 
 void printTextWithCursor(List L, adr C) {
+/*
+I.S: terdefinisi List L (mungkin kosong) dan adr C sebagai pointer yang menunjuk posisi cursor
+F.S: menampikan isi List L ke layar dengan tanda pada cursor
+*/
     adr P = L.first;
     while (P != Nil) {
-        if (P == C) {
-            cout << "[" << P->info << "]"; // Penanda kursor
-        } else if (P->info == '_') {
+        if (P == C) { // cursor ditandai dengan kurung siku ([])
+            cout << "[" << P->info << "]";
+        } else if (P->info == '_') { // underscore ('_') sebagai spasi
             cout << " ";
         } else {
             cout << P->info;
@@ -203,50 +244,62 @@ void printTextWithCursor(List L, adr C) {
 }
 
 void addText(List &L, adr &C, Stack &U) {
+/*
+I.S: terdefinisi List L yang berisi teks, adr C yang berisi alamat cursor, dan Stack U yang berisi riwayat setiap aksi yang dilakukan
+F.S: List L berisi elemen baru dari inputan user dan Stack U berisi riwayat aksi masukan
+*/
     adr P;
     infotype v;
     do {
         cin >> v;
         if (v != ';') {
             P = createElmList(v);
-            push(U, {"Input", P});
+            push(U, {"Input", P}); // memasukkan riwayat aksi ke Stack U (undo)
             insertAfter(L, P, C);
             C = P;
         }
-    } while (v != ';');
+    } while (v != ';'); // stop ketika bukan titik koma (';')
 }
 
 void moveCursorLeft(List &L, adr &C) {
+/*
+I.S: terdefinisi List L yang berisi teks dan adr C yang berisi alamat cursor
+F.S: kursor adr C berpindah ke kiri
+*/
     if (C != L.first) { // kursor tidak di first
         C = C->prev;
     }
 }
 
 void moveCursorRight(List &L, adr &C) {
+/*
+I.S: terdefinisi List L yang berisi teks dan adr C yang berisi alamat cursor
+F.S: kursor adr C berpindah ke kiri
+*/
     if (C != L.last) { // kursor tidak di last
         C = C->next;
     }
 }
 
-void DeleteOnCursor(List &L, adr &C, adr &P, string &Act){
+void DeleteOnCursor(List &L, adr &C, adr &P) {
+/*
+I.S: terdefinisi List L yang berisi teks, adr C yang menyimpan alamat cursor, adr P yang menyimpan elemen yang didelete, dan string Act yang berisi aksi yang dilakukan
+F.S: elemen pada posisi cursor dihapus dan Act berisi nilai berdasarkan aksi delete yang dilakukan
+*/
     adr tempP;
     if (L.first != Nil && C != Nil) {
         if (L.first == L.last) {
             deleteFirst(L, P);
             C = L.first;
-            Act = "Delete First";
         } else if (C == L.first) {
             moveCursorRight(L, C);
             deleteFirst(L, P);
-            Act = "Delete First";
         } else if (C == L.last) {
             moveCursorLeft(L, C);
             deleteLast(L, P);
-            Act = "Delete Last";
         } else {
             moveCursorLeft(L, C);
             deleteAfter(L, P, C);
-            Act = "Delete Between";
         }
     }
 }
@@ -299,9 +352,9 @@ F.S: memindahkan kursor atau men-delete pada posisi kursor berdasarkan pilihan u
                 push(U, {"Kursor Kanan", Nil});
             } else if (pilih == 3) { // memilih delete char pada posisi cursor
                 tempP = P;
-                DeleteOnCursor(L, C, P, aksi);
+                DeleteOnCursor(L, C, P);
                 if (tempP != P) {
-                    push(U, {aksi, P});
+                    push(U, {"Delete", P});
                 }
             }
         } while (pilih != 0); // keluar menu
@@ -369,6 +422,38 @@ F.S: menampilkan text dengan kata yang dicari diapit dengan kurung siku ([])
     }
 }
 
+void ubah_huruf(List &L, adr &C, Stack &U) {
+/*
+I.S: terdefinisi List L yang berisi elemen, adr C sebagai kursor dalam L, dan Stack U untuk riwayat aksi yang dilakukan
+F.S: isi dari pointer adr C berubah sesuai masukan dari user
+*/
+    char pilih;
+    adr tempP, P;
+    string aksi;
+
+    if (L.first != Nil) { // list L tidak kosong
+        do {
+            printTextWithCursor(L, C);
+            cout << "(1)Kiri (2)Kanan (a-z)Ubah Huruf (0)Keluar" << endl;
+            cin >> pilih;
+
+            if (pilih == '1') { // memilih move cursor left
+                moveCursorLeft(L, C);
+                push(U, {"Kursor Kiri", Nil});
+            } else if (pilih == '2') { // memilih move cursor right
+                moveCursorRight(L, C);
+                push(U, {"Kursor Kanan", Nil});
+            } else if (pilih != '0') { // memilih untuk mengubah info dari adr C
+                string convert(1, C->info);
+                push(U, {convert, Nil});
+                C->info = pilih;
+            }
+        } while (pilih != '0'); // keluar menu jika memilih 0
+    } else { // list L kosong
+        cout << "Teks tidak tersedia." << endl;
+    }
+}
+
 // undo redo
 void doUndo(List &L, Stack &U, Stack &R, adr &C) {
 /*
@@ -378,6 +463,7 @@ F.S: list L dan adr C ter-Undo sampai bertemu aksi input atau delete dan menyimp
     infoUndoRedo x;
     adr P;
     string tempString;
+    char tempChar;
     bool status = false;
     if (isEmpty(U)) { // stack U kosong
         cout << "Tidak ada aksi undo." << endl;
@@ -390,16 +476,16 @@ F.S: list L dan adr C ter-Undo sampai bertemu aksi input atau delete dan menyimp
         } else if (x.aksi == "Kursor Kanan") {
             moveCursorLeft(L, C);
         } else if (x.aksi == "Input") {
-            DeleteOnCursor(L, C, P, tempString);
+            DeleteOnCursor(L, C, P);
             status = true;
-        } else if (x.aksi == "Delete First") {
-            insertFirst(L, x.address);
-            status = true;
-        } else if (x.aksi == "Delete Last") {
-            insertLast(L, x.address);
-            status = true;
-        } else if (x.aksi == "Delete Between") {
+        } else if (x.aksi == "Delete") {
             insertAfter(L, x.address, C);
+            moveCursorRight(L, C);
+            status = true;
+        } else {
+            tempChar = C->info;
+            C->info = x.aksi[0];
+            x.aksi = tempChar;
             status = true;
         }
         push(R, x); // push stack redo
@@ -414,6 +500,7 @@ F.S: list L dan adr C ter-Redo sampai bertemu aksi input atau delete dan menyimp
     infoUndoRedo x;
     adr P;
     string tempString;
+    char tempChar;
     bool status = false;
     if (isEmpty(R)) { // stack U kosong
         cout << "Tidak ada aksi redo." << endl;
@@ -429,14 +516,14 @@ F.S: list L dan adr C ter-Redo sampai bertemu aksi input atau delete dan menyimp
             insertAfter(L, x.address, C);
             C = x.address;
             status = true;
-        } else if (x.aksi == "Delete First") {
-            DeleteOnCursor(L, C, P, tempString);
+            moveCursorRight(L, C);
+        } else if (x.aksi == "Delete") {
+            DeleteOnCursor(L, C, P);
             status = true;
-        } else if (x.aksi == "Delete Last") {
-            DeleteOnCursor(L, C, P, tempString);
-            status = true;
-        } else if (x.aksi == "Delete Between") {
-            DeleteOnCursor(L, C, P, tempString);
+        } else {
+            tempChar = C->info;
+            C->info = x.aksi[0];
+            x.aksi = tempChar;
             status = true;
         }
         push(U, x); // push stack undo
@@ -452,7 +539,7 @@ F.S: list L, Stack U, Stack R, dan adr C berubah berdasarkan pilihan yang dipili
 
     if (L.first != Nil) {
         do {
-            printTextWithCursor(L, C);
+            printTextWithCursor(L, C); // print teks dengan kursor
             cout << "(1)Undo (2)Redo (0)Keluar" << endl;
             cin >> pilih;
 

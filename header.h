@@ -23,10 +23,6 @@ struct infoUndoRedo {
     string aksi;
     adr address;
 };
-struct infotypeStack {
-    string action;
-    infoUndoRedo info;
-};
 typedef int index;
 struct Stack {
     infoUndoRedo info[MAXSIZE];
@@ -77,7 +73,7 @@ void moveCursorLeft(List &L, adr &C);
 
 void moveCursorRight(List &L, adr &C);
 
-void DeleteOnCursor(List &L, adr &C, adr &P, string &Act);
+void DeleteOnCursor(List &L, adr &C, adr &P);
 
 // Menu
 void input_text(List &L, adr &C, Stack &U);
@@ -87,6 +83,8 @@ void print_text(List L);
 void pindahkan_kursor_atau_hapus_teks(List &L, adr &C, Stack &U);
 
 void cari_kata(List L);
+
+void ubah_huruf(List &L, adr &C, Stack &U);
 
 void doUndo(List &L, Stack &U, Stack &R, adr &C);
 

@@ -17,7 +17,8 @@ int main() {
         printf(" 2. Print Text             \n");
         printf(" 3. Pindahkan Kursor/Hapus \n");
         printf(" 4. Cari Kata              \n");
-        printf(" 5. Undo/Redo              \n");
+        printf(" 5. Ubah Huruf             \n");
+        printf(" 6. Undo/Redo              \n");
         printf(" 0. Exit Program           \n");
         printf("---------------------------\n");
 
@@ -33,9 +34,12 @@ int main() {
         } else if (pilih == 4) {
             cari_kata(Text);
         } else if (pilih == 5) {
+            ubah_huruf(Text, Cursor, Undo);
+        } else if (pilih == 6) {
             undo_redo(Text, Undo, Redo, Cursor);
         }
     } while (pilih != 0);
 
+    cout << "Terima kasih telah menggunakan program kami! :)" << endl;
     return 0;
 }
